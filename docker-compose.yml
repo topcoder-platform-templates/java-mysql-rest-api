@@ -1,0 +1,26 @@
+version: "3"
+services:
+  mysql-db:
+    build: ./docker/mysql
+    image: java-mysql-sp-db
+    container_name: "java-mysql-sp-db"
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME:-topcoder}
+      - MYSQL_USER=${DATABASE_USERNAME:-topcoder}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD:-Topcoder123}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD:-Topcoder123}
+    ports:
+      - "3306:3306"
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    image: java-mysql-sp-api
+    container_name: "java-mysql-sp-api"
+    ports:
+      - "8080:8080"
+    restart: on-failure  
+    links:
+      - "mysql-db:database-host"  
+    depends_on:
+      - "mysql-db"
